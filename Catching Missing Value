@@ -12,7 +12,7 @@ df[df.isnull().any(axis=1)]
 #eksiklik frekansı
 df.isnull().sum().sort_values(ascending=False)
 #yüzdelik olarak eksiklik frekansı
-(df.isnull().sum())/(df.shape[0]*100).sort_values(ascending=False)
+(df.isnull().sum()/df.shape[0]*100).sort_values(ascending=False)
 #eksikliklerin seçilmesi
 na_cols= [col for col in df.columns if df[col].isnull().sum()>0]
 #bu işlemlere güzel bir fonksiyon yazarsak
