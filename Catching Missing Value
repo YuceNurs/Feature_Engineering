@@ -1,1 +1,31 @@
 
+# veri setinde eksik veri var mı?
+df.isnull().values.any()
+
+#değişkenlerdeki eksik değer sayısını bulmak istersek
+df.isnull().sum
+#veri setindeki toplam eksik değer sayısına erişmek istersem, (en az bir değer)
+df.isnull().sum().sum()
+df[df.isnull().any(axis=1)]
+
+#azalan şekilde sıralamak istersem
+#eksiklik frekansı
+df.isnull().sum().sort_values(ascending=False)
+#yüzdelik olarak eksiklik frekansı
+(df.isnull().sum())/(df.shape[0]*100).sort_values(ascending=False)
+#eksikliklerin seçilmesi
+na_cols= [col for col in df.columns if df[col].isnull().sum()>0]
+#bu işlemlere güzel bir fonksiyon yazarsak
+
+def missing_values_table(dataframe, na_name=False):
+    na_columns = [col for col in dataframe.columns if dataframe[col].isnull().sum()>0]
+    n_miss=dataframe[na_columns].isnull().sum().sort_values(ascending=False)
+    ratio=(dataframe[na_columns].isnull().sum()/dataframe.shape[0]*100).sort_values(ascending=False)
+    missing_df = pd.concat([n_miss, np.round(ratio,2)],axis=1,keys=['n_miss','ratio'])
+    print(missing_df, end="\n")
+
+    if na_name:
+        return na_columns
+
+missing_values_table(df, True)
+
