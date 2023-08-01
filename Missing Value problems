@@ -1,0 +1,27 @@
+
+#Missing Values problemlerine bakış
+#1. Yöntem : silmek
+#Eğer çok fazla veri varsa verisetinde silmek doğru bir yaklaşım olabilir.
+pd.set_option('display.max_columns', None )
+df= sns.load_dataset("titanic")
+print(df)
+
+#2. Yöntem : basit değer atama
+# ortama , medyan ya da sabit ataması yapabiliriz.
+df["age"].fillna(df["age"].mean())
+df["age"].fillna(df["age"].median())
+df["age"].fillna(0)
+#sorgulamak istersek .isnull().sum()
+#Veri tipimiz objectten farklı ise mod değer ataması yapabiliriz ya da kelime ataması
+#dff = df.apply(lambda x: x.fillna(x.mean()) if x.dtype !="O" else x, axis =0).head()
+#print(dff)
+#dff.isnull().sum().sort_values(ascending=False)
+
+df.apply(lambda x: x.fillna(x.mode()[0]) if (x.dtype == "O" and len(x.unique())<=10) else x , axis=0)
+
+#cinsiyete göre yaş ort eklemek istersek
+df["age"].fillna(df.groupby("sex")["age"].transform("mean")).isnull().sum()
+#kodu ayrı iki cinsiyet için tekrar yazalım
+
+df.loc[(df["age"].isnull()) & (df["sex"]=="female"), "age"]=df.groupby("sex")["age"].mean()["female"]
+df.loc[(df["age"].isnull()) & (df["sex"]=="male"), "age"]=df.groupby("sex")["age"].mean()["male"]
